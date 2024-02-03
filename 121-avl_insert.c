@@ -44,16 +44,6 @@ bst_t *bst_insert(bst_t **tree, int value)
 }
 
 /**
- * avl_insert - inserts a value in an AVL Tree
- * @tree: a double pointer to the root node of the AVL tree
- * @value: value to insert
- *
- * Return: a pointer to the created node
- *         NULL on failure
- */
-#include "binary_trees.h"
-
-/**
  * avl_insert - Inserts a value into an AVL tree
  * @tree: Double pointer to the root node of the AVL tree
  * @value: Value to be inserted
@@ -106,9 +96,9 @@ avl_t *avl_insert(avl_t **tree, int value)
     if (balance < -1 && value < (*tree)->right->n)
     {
         (*tree)->right = avl_right_rotate((*tree)->right);
-        return (avl_left_rotate(*tree));
+        return avl_left_rotate(*tree);
     }
 
-    return (*tree);
+    return *tree;
 }
 
