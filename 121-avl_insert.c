@@ -51,27 +51,64 @@ bst_t *bst_insert(bst_t **tree, int value)
  * Return: a pointer to the created node
  *         NULL on failure
  */
+#include "binary_trees.h"
+
+/**
+ * avl_insert - Inserts a value into an AVL tree
+ * @tree: Double pointer to the root node of the AVL tree
+ * @value: Value to be inserted
+ *
+ * Return: Pointer to the created node or NULL on failure
+ */
 avl_t *avl_insert(avl_t **tree, int value)
 {
-	int balance = 0;
-	avl_t *node = bst_insert(tree, value);
+    if (tree == NULL)
+        return (NULL);
 
-	balance = binary_tree_balance(*tree);
+    if (*tree == NULL)
+    {
+        *tree = binary_tree_node(NULL, value);
+        if (*tree == NULL)
+            return NULL;
+        return (*tree);
+    }
 
-	if (balance > 1 && value < node->left->n)
-		return (binary_tree_rotate_right(node));
-	if (balance < -1 && value > node->right->n)
-		return (binary_tree_rotate_left(node));
-	if (balance > 1 && value > node->left->n)
-	{
-		node->left = binary_tree_rotate_left(node->left);
-		return (binary_tree_rotate_right(node));
-	}
-	if (balance < -1 && value < node->right->n)
-	{
-		node->right = binary_tree_rotate_right(node->right);
-		return (binary_tree_rotate_left(node));
-	}
+    if (value < (*tree)->n)
+    {
+        (*tree)->left = avl_insert(&((*tree)->left), value);
+        if ((*tree)->left == NULL)
+            return (NULL);
+    }
+    else if (value > (*tree)->n)
+    {
+        (*tree)->right = avl_insert(&((*tree)->right), value);
+        if ((*tree)->right == NULL)
+            return (NULL);
+    }
+    else
+        return (NULL);
 
-	return (node);
+    (*tree)->height = 1 + MAX(avl_height((*tree)->left), avl_height((*tree)->right));
+    int balance = avl_balance_factor(*tree);
+
+    if (balance > 1 && value < (*tree)->left->n)
+        return (avl_right_rotate(*tree));
+
+    if (balance < -1 && value > (*tree)->right->n)
+        return (avl_left_rotate(*tree));
+
+    if (balance > 1 && value > (*tree)->left->n)
+    {
+        (*tree)->left = avl_left_rotate((*tree)->left);
+        return (avl_right_rotate(*tree));
+    }
+
+    if (balance < -1 && value < (*tree)->right->n)
+    {
+        (*tree)->right = avl_right_rotate((*tree)->right);
+        return (avl_left_rotate(*tree));
+    }
+
+    return (*tree);
 }
+
